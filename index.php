@@ -109,14 +109,14 @@ $data = ' [
 
 $array = json_decode($data, true);
 
-$waiting = array();
-$talking = array();
+$clientsIsWaiting = array();
+$clientsIsTalkingWithOperator = array();
 foreach ($array as $value) {
     if ($value['state'] === 'Ringing' && $value['dialplan']['app_name'] === 'AppQueue') {
-        $waiting[] = $value['connected']['number'];
+        $clientsIsWaiting[] = $value['connected']['number'];
     }
     if ($value['state'] === 'Up' && $value['dialplan']['app_name'] === 'Queue') {
-        $talking[] = [
+        $clientsIsTalkingWithOperator[] = [
             'client_number' => $value['caller']['number'],
             'operator_number' => $value['connected']['number']
         ];
@@ -164,16 +164,16 @@ function sendRequest()
     <div class="column">
         <table>
             <tr>
-                <th>В Ожидании: <?php if (is_null($waiting) && empty($waiting)) {
+                <th>В Ожидании: <?php if (is_null($clientsIsWaiting) && empty($clientsIsWaiting)) {
                         $count = 0;
                     } else {
-                        $count = count($waiting);
+                        $count = count($clientsIsWaiting);
                     }
                     echo $count; ?></th>
             </tr>
             <?php
 
-            foreach ($waiting as $value) {
+            foreach ($clientsIsWaiting as $value) {
                 echo '<tr>
                 <td>' . $value . '</td>
             </tr>';
@@ -184,17 +184,17 @@ function sendRequest()
     <div class="column">
         <table>
             <tr>
-                <th>Отвечают: <?php if (is_null($talking) && empty($talking)) {
+                <th>Отвечают: <?php if (is_null($clientsIsTalkingWithOperator) && empty($clientsIsTalkingWithOperator)) {
                         $count = 0;
                     } else {
-                        $count = count($talking);
+                        $count = count($clientsIsTalkingWithOperator);
                     }
                     echo $count; ?></th>
                 <th>Номер оператора:</th>
             </tr>
             <?php
 
-            foreach ($talking as $value) {
+            foreach ($clientsIsTalkingWithOperator as $value) {
                 echo '<tr>
                 <td>' . $value['client_number'] . '</td>
                 <td>' . $value['operator_number'] . '</td>
